@@ -29,7 +29,7 @@ data "tls_certificate" "cluster" {
     url                 = aws_eks_cluster.eks_cluster_main.identity.0.oidc.0.issuer
 }
 
-resource "aws_iam_openid_connect_provider" "eks_cluster_main_connection"
+resource "aws_iam_openid_connect_provider" "eks_cluster_main_connection" {
     client_id_list      = ["sts.amazonaws.com"]
     thumbprint_list     = concat([data.tls_certificate.cluster.certificates.0.sha1_fingerprint], [])
     url                 = aws_eks_cluster.eks_cluster_main.identity.0.oidc.0.issuer
