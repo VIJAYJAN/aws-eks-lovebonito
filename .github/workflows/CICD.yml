@@ -34,6 +34,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-1
 
+    - name: Terraform state update
+      run: terraform state replace-provider -- -/aws hashicorp/aws
+
     - name: Terraform Init
       run: terraform init
 
