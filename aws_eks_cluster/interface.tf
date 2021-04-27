@@ -25,10 +25,10 @@ variable "endpoint_public_access" {
   description                   = "whether or not the Amazon EKS public API server endpoint is enabled."
 }
 
-variable "eks_cluster_subnet_ids" {
-  type                          = list(string)
-  description                   = "List of subnet IDs. Must be in at least two different availability zones. Amazon EKS creates cross-account elastic network interfaces in these subnets to allow communication between your worker nodes and the Kubernetes control plane."
-}
+#variable "eks_cluster_subnet_ids" {
+#  type                          = list(string)
+#  description                   = "List of subnet IDs. Must be in at least two different availability zones. Amazon EKS creates cross-account elastic network interfaces in these subnets to allow communication between your worker nodes and the Kubernetes control plane."
+#}
 
 variable "private_subnet_ids" {
   type                          = list(string)
@@ -54,7 +54,7 @@ variable "disk_size" {
 
 variable "instance_types" {
   type                          = list(string)
-  default                       = ["t2.medium"]
+  default                       = ["t3.medium"]
   description                   = "Set of instance types associated with the EKS Node Group."
 }
 
@@ -107,4 +107,14 @@ variable nodes_sg_name {
 variable vpc_id {
   description                   = "VPC ID from which belogs the subnets"
   type                          = string
+}
+
+variable "role_arn" {
+  description = "Role arn to be assumed by the kubeconfig"
+  type        = string
+}
+
+variable "region" {
+  description = "aws region to deploy to"
+  type        = string
 }

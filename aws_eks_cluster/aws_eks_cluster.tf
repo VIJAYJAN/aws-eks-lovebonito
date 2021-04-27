@@ -4,12 +4,13 @@
 resource "aws_eks_cluster" "eks_cluster_main" {
   name                        = var.eks_cluster_name
   role_arn                    = aws_iam_role.eks_cluster.arn
+  enabled_cluster_log_types   = ["api", "audit", "authenticator", "controllerManager", "scheduler"]
 
   vpc_config {
     security_group_ids        = [aws_security_group.eks_cluster_sg.id, aws_security_group.eks_nodes_sg.id]
     endpoint_private_access   = var.endpoint_private_access
     endpoint_public_access    = var.endpoint_public_access
-    subnet_ids                = var.eks_cluster_subnet_ids
+    subnet_ids                = concat(var.private_subnet_ids, var.public_subnet_ids)
   }
 
   depends_on = [
@@ -24,7 +25,7 @@ resource "aws_eks_cluster" "eks_cluster_main" {
 #--------------------------------------------------------------------------------------------
 
 resource "aws_cloudwatch_log_group" "eks_cluster_logs" {
-  name              = "/aws/eks/${var.eks_cluster_name}/cluster"
+  name              = "/aws/eks/var.eks_cluster_name/cluster"
   retention_in_days = 7
 }
 
@@ -93,4 +94,13 @@ resource "aws_security_group_rule" "cluster_outbound" {
   source_security_group_id      = aws_security_group.eks_nodes_sg.id
   to_port                       = 65535
   type                          = "egress"
+}
+
+resource "null_resource" "generate_kubeconfig" {
+
+  provisioner "local-exec" {
+    command              = "aws eks update-kubeconfig --name ${var.eks_cluster_name} --region ${var.region} --role-arn ${var.role_arn}"
+  }
+
+  depends_on             = [aws_eks_cluster.eks_cluster_main]
 }

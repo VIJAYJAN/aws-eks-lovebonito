@@ -42,9 +42,9 @@ module "eks_cluster_core" {
   cluster_sg_name             = "${var.platform}-cluster-sg"
   nodes_sg_name               = "${var.platform}-node-sg"
   eks_cluster_name            = var.eks_cluster_name
-  eks_cluster_subnet_ids      = module.vpc_for_eks_core.public_subnet_ids
+  #eks_cluster_subnet_ids      = concat(module.vpc_for_eks_core.public_subnet_ids, module.vpc_for_eks_core.private_subnet_id)
   private_desired_size        = 3
-  private_max_size            = 8
+  private_max_size            = 3
   private_min_size            = 2
   public_desired_size         = 1
   public_max_size             = 2
@@ -57,4 +57,10 @@ module "eks_cluster_core" {
   private_subnet_ids          = [module.vpc_for_eks_core.private_subnet_id]
   public_subnet_ids           = module.vpc_for_eks_core.public_subnet_ids
   environment                 = var.env
+  region                      = var.region
+  role_arn                    = var.role_arn
+}
+
+module "kubernetes_execution" {
+  source                      = "./kube_execution"
 }

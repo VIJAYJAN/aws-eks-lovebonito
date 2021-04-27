@@ -170,3 +170,22 @@ resource "aws_iam_policy" "eks_nodes_iam" {
 }
 EOF
 }
+
+data "template_file" "aws_auth_configmap" { 
+
+  template               = file("${path.module}/aws-auth.yaml.tpl")
+
+  vars = {
+    arn_instance_role    = aws_iam_role.eks_nodes_roles.arn
+  }
+}
+
+resource "null_resource" "execute_aws_auth_configmap" { 
+
+  provisioner "local-exec" {
+    command              = "echo '${data.template_file.aws_auth_configmap.rendered}' > aws-auth.yaml && kubectl apply -f aws-auth.yaml && rm aws-auth.yaml"
+  }
+  
+
+  depends_on             = [null_resource.generate_kubeconfig]
+}

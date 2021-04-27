@@ -1,7 +1,7 @@
 #--------------------------------------------------------------------------------------------
 # Creating EKS Worker Node Groups
 #--------------------------------------------------------------------------------------------
-resource "aws_eks_node_group" "eks_cluster_main" {
+resource "aws_eks_node_group" "private_nodes" {
   cluster_name                  = aws_eks_cluster.eks_cluster_main.name
   node_group_name               = var.node_group_name
   node_role_arn                 = aws_iam_role.eks_nodes_roles.arn
@@ -26,7 +26,7 @@ resource "aws_eks_node_group" "eks_cluster_main" {
   ]
 }
 
-resource "aws_eks_node_group" "public" {
+resource "aws_eks_node_group" "public_nodes" {
   cluster_name                  = aws_eks_cluster.eks_cluster_main.name
   node_group_name               = "${var.node_group_name}-public"
   node_role_arn                 = aws_iam_role.eks_nodes_roles.arn
